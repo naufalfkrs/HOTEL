@@ -1,6 +1,7 @@
 const kamarModel = require(`../models/index`).kamar
 const tkamarModel = require(`../models/index`).tipe_kamar
 const Op = require(`sequelize`).Op
+const moment = require(`moment`)
 
 const Sequelize = require("sequelize");
 const sequelize = new Sequelize("hotel", "root", "", {
@@ -33,14 +34,21 @@ exports.findKamar = async (request, response) => {
 }
 
 exports.getKamarAvaible = async (request, response) => {
+    const tgl_akses_satu = new Date (request.body.tgl_akses_satu);
+    const tgl_akses_dua = new Date (request.body.tgl_akses_dua);
+    let tgl1 = moment(tgl_akses_satu).format("YYYY-MM-DD");
+    let tgl2 = moment(tgl_akses_dua).format("YYYY-MM-DD");
+  
     const result = await sequelize.query(
-        `SELECT tipe_kamars.*, count(kamars.id) as sisa_kamar FROM kamars LEFT JOIN tipe_kamars ON kamars.id_tipe_kamar = tipe_kamars.id LEFT JOIN detail_pemesanans ON detail_pemesanans.id_kamar = kamars.id AND  detail_pemesanans.tgl_akses BETWEEN "2023-01-20" AND "2023-01-23" WHERE detail_pemesanans.tgl_akses IS NULL GROUP BY tipe_kamars.id `
-    )
+      `SELECT tipe_kamars.nama_tipe_kamar, kamars.nomor_kamar FROM kamars LEFT JOIN tipe_kamars ON kamars.id_tipe_kamar = tipe_kamars.id LEFT JOIN detail_pemesanans ON detail_pemesanans.id_kamar = kamars.id WHERE kamars.id NOT IN (SELECT id_kamar from detail_pemesanans WHERE tgl_akses BETWEEN '${tgl1}' AND '${tgl2}') GROUP BY kamars.nomor_kamar`
+    );
+  
     return response.json({
-        success: true,
-        data: result[0],
-        message: ` Avaible Kamar have been loaded`,
-    })
+      success: true,
+      sisa_kamar: result[0].length,
+      data: result[0],
+      message: `Room have been loaded`,
+    });
 }
 
 exports.addKamar = async (request, response) => {
