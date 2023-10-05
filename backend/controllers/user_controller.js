@@ -37,7 +37,7 @@ exports.login = async (request, response) => {
     try {
         const params = {
             email: request.body.email,
-            password: request.body.password,
+            password: md5(request.body.password),
         }
 
         const findUser = await userModel.findOne({ where: params })

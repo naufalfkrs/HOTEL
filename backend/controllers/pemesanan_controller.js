@@ -13,11 +13,11 @@ const sequelize = new Sequelize("hotel", "root", "", {
 
 exports.getAllPemesanan = async (request, response) => { 
     const data = await sequelize.query(
-        "SELECT pemesanans.*,users.*,tipe_kamars.*,kamars.*, detail_pemesanans.* from pemesanans JOIN users ON pemesanans.id_user=users.id JOIN tipe_kamars ON pemesanans.id_tipe_kamar=tipe_kamars.id JOIN detail_pemesanans ON pemesanans.id=detail_pemesanans.id_pemesanan JOIN kamars ON detail_pemesanans.id_kamar=kamars.id"
+        "SELECT pemesanans.*,users.*,tipe_kamars.* from pemesanans JOIN users ON pemesanans.id_user=users.id JOIN tipe_kamars ON pemesanans.id_tipe_kamar=tipe_kamars.id "
       )
     return response.json({
         success: true,
-        data: data,
+        data: data[0],
         message: `All pemesanan have been loaded`
     })
 }
@@ -77,7 +77,7 @@ exports.addPemesanan = async (request, response) => {
             nama_tamu: request.body.nama_tamu,
             jumlah_kamar: request.body.jumlah_kamar,
             id_tipe_kamar: room.id_tipe_kamar,
-            status_pemesanan: request.body.status_pemesanan,
+            status_pemesanan: "baru",
             id_user: userId.id
         }
 
@@ -265,34 +265,4 @@ exports.updatePemesanan = async (request, response) => {
           message: error.message,
         });
       });
-}
-
-exports.deletePemesanan = async (request, response) => {
-    let id_pemesanan = request.params.id
-    detailpemesananModel.destroy(
-        { where: { id_pemesanan: id_pemesanan } }
-    )
-
-    .then(result => {
-        pemesananModel.destroy({ where: { id: id_pemesanan } })
-
-        .then(result => {
-            return response.json({
-                success: true,
-                message: `Pemesanan's has deleted`
-            })
-        })
-        .catch(error => {
-            return response.json({
-                success: false,
-                message: error.message
-            })
-        })
-    })
-    .catch(error => {
-        return response.json({
-            success: false,
-            message: error.message
-        })
-    })
 }

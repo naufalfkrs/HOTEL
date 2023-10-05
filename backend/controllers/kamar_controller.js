@@ -52,16 +52,17 @@ exports.getKamarAvaible = async (request, response) => {
 }
 
 exports.addKamar = async (request, response) => {
-    let nama_tipe_kamar = request.body.nama_tipe_kamar;
-    let tipeId = await tkamarModel.findOne({
-        where: {
-        [Op.and]: [{ nama_tipe_kamar: { [Op.substring]: nama_tipe_kamar } }],
-        },
-    })
+    // let nama_tipe_kamar = request.body.nama_tipe_kamar;
+    // let tipeId = await tkamarModel.findOne({
+    //     where: {
+    //     [Op.and]: [{ nama_tipe_kamar: { [Op.substring]: nama_tipe_kamar } }],
+    //     },
+    // })
 
     let newKamar = {
         nomor_kamar: request.body.nomor_kamar,
-        id_tipe_kamar: tipeId.id,
+        id_tipe_kamar: request.body.id_tipe_kamar,
+        // id_tipe_kamar: tipeId.id,
     }
 
     kamarModel
@@ -82,16 +83,17 @@ exports.addKamar = async (request, response) => {
 }
 
 exports.updateKamar = async (request, response) => {  
-    let nama_tipe_kamar = request.body.nama_tipe_kamar;
-    let tipeId = await tkamarModel.findOne({
-      where: {
-        [Op.and]: [{ nama_tipe_kamar: { [Op.substring]: nama_tipe_kamar } }],
-      },
-    })
+    // let nama_tipe_kamar = request.body.nama_tipe_kamar;
+    // let tipeId = await tkamarModel.findOne({
+    //   where: {
+    //     [Op.and]: [{ nama_tipe_kamar: { [Op.substring]: nama_tipe_kamar } }],
+    //   },
+    // })
   
     let newKamar = {
       nomor_kamar: request.body.nomor_kamar,
-      id_tipe_kamar: tipeId.id,
+      id_tipe_kamar: request.body.id_tipe_kamar,
+    //   id_tipe_kamar: tipeId.id,
     }
 
     let idKamar=request.params.id

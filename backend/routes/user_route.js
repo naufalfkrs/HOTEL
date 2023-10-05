@@ -9,6 +9,6 @@ app.get("/", auth.authVerify, userController.getAllUser)
 app.post("/find", auth.authVerify, userController.findUser)
 app.post("/", auth.authVerify, userController.addUser)
 app.put("/:id", auth.authVerify, userController.updateUser)
-app.delete("/:id", auth.authVerify, userController.deleteUser)
+app.delete("/:id", auth.authVerify,userController.deleteUser)
 
 module.exports = app
