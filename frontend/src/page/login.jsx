@@ -30,19 +30,19 @@ export default class Login extends React.Component {
             .then(response => {
                 this.setState({ logged: response.data.data.logged })
                 if (response.status === 200) {
-                    let id = response.data.data.id_user
+                    let id = response.data.data.id
                     let token = response.data.data.token
                     let role = response.data.data.role
                     let email = response.data.data.email
-                    let user_name = response.data.data.user_name
+                    let nama_user = response.data.data.nama_user
                     localStorage.setItem("id", id)
                     localStorage.setItem("token", token)
                     localStorage.setItem("role", role)
                     localStorage.setItem("email", email)
-                    localStorage.setItem("username", user_name)
+                    localStorage.setItem("username", nama_user)
                     alert("Success Login")
                     if(role === 'admin'){
-                        window.location.href = "/user"
+                        window.location.href = "/kamar"
                     }else if(role === 'resepsionis'){
                         window.location.href = "/history"
                     }else if(role === 'customer'){

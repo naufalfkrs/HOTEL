@@ -20,13 +20,13 @@ export default class TypeRoom extends React.Component {
         }
 
         if (localStorage.getItem("token")) {
-            if (localStorage.getItem("role") === "admin" ||
-                localStorage.getItem("role") === "resepsionis") {
+            if (localStorage.getItem("role") === "admin") {
                 this.state.token = localStorage.getItem("token")
                 this.state.role = localStorage.getItem("role")
-            } else {
-                window.alert("You're not admin or resepsionis!")
-                window.location = "/"
+            } else if (localStorage.getItem("role") === "resepsionis" ) {
+                window.location = "/history"
+            } else if (localStorage.getItem("role") === "customer" ) {
+                window.location = "/beranda"
             }
         }
     }
@@ -48,23 +48,6 @@ export default class TypeRoom extends React.Component {
         this.setState({
             foto: e.target.files[0]
         })
-    }
-
-    handleCloseDetail = () => {
-        $("#modal_detail").hide()
-    }
-
-    handleDetail = (item) => {
-        $("#modal_detail").show()
-        this.setState({
-            id: item.id,
-            nama_tipe_kamar: item.nama_tipe_kamar,
-            harga: item.harga,
-            deskripsi: item.deskripsi,
-            foto: item.foto
-
-        })
-
     }
 
     handleClose = () => {
@@ -183,10 +166,10 @@ export default class TypeRoom extends React.Component {
     }
 
     checkRole = () => {
-        if (this.state.role !== "admin" && this.state.role !== "resepsionis") {
-            localStorage.clear()
-            window.alert("You're not admin or resepsionis!")
-            window.location = '/'
+        if (this.state.role === "resepsionis") {
+            window.location = '/history'
+        } else if (this.state.role === "customer") {
+            window.location = '/beranda'
         }
     }
 
@@ -199,8 +182,7 @@ export default class TypeRoom extends React.Component {
         return (
             <>
                 <Navbar />
-                {
-                    this.state.role === "admin" &&
+
                     <div class="my-6">
                         <div className="mt-28 flex justify-center">
                             <h3 className="text-2xl">Tipe Kamar List</h3>
@@ -208,26 +190,9 @@ export default class TypeRoom extends React.Component {
 
                         <div className="flex justify-center mr-4">
                             <div className="flex rounded w-3/4 mt-7 mb-5">
-                                {this.state.role === "resepsionis" &&
-                                    <input
-                                        type="text"
-                                        className=" block w-full px-4 py-2 bg-white border rounded-md focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                                        placeholder="Search..."
-                                        name="keyword"
-                                        value={this.state.keyword}
-                                        onChange={this.handleChange}
-                                    />
-                                }
-                                {this.state.role === "resepsionis" &&
-                                    <button className="w-1/6 ml-2 px-4 text-white bg-blue-600 border border-1 border-blue-600 rounded hover:bg-blue-700" onClick={this._handleFilter}>
-                                        {/* <FontAwesomeIcon icon={faSearch} color="blue" /> */}Cari
-                                    </button>
-                                }
-                                {this.state.role === "admin" &&
-                                    <button className="w-1/6 ml-2 px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" onClick={() => this.handleAdd()}>
-                                        Add +
-                                    </button>
-                                }
+                                <button className="w-1/6 ml-2 px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" onClick={() => this.handleAdd()}>
+                                    Add +
+                                </button>
                             </div>
                         </div>
 
@@ -239,9 +204,7 @@ export default class TypeRoom extends React.Component {
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Nama</th>
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Deskripsi</th>
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Harga</th>
-                                    {this.state.role === "admin" &&
-                                        <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Aksi</th>
-                                    }
+                                    <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -263,30 +226,20 @@ export default class TypeRoom extends React.Component {
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 <div className="text-sm text-gray-900">{item.harga}</div>
                                             </td>
-                                            {this.state.role === "admin" &&
-                                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                    <button class="bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded mr-2" onClick={() => this.handleEdit(item)}>
-                                                        {/* <FontAwesomeIcon icon={faPencilSquare} size="lg" /> */}Edit
-                                                    </button>
-                                                    <button class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded" onClick={() => this.handleDrop(item.id)}>
-                                                        {/* <FontAwesomeIcon icon={faTrash} size="lg" /> */}Delete
-                                                    </button>
-                                                </td>
-                                            }
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <button class="bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded mr-2" onClick={() => this.handleEdit(item)}>
+                                                    Edit
+                                                </button>
+                                                <button class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded" onClick={() => this.handleDrop(item.id)}>
+                                                    Delete
+                                                </button>
+                                            </td>
                                         </tr>
                                     );
                                 })}
                             </tbody>
                         </table>
                     </div>
-                }
-
-                {
-                    this.state.role === "resepsionis" &&
-                    <div class=" flex justify-center items-center h-screen">
-                        <div class="text-center">Hanya Admin yang dapat mengakses tipe kamar</div>
-                    </div>
-                }
 
                 {/* Modal Form */}
                 <div id="modal_typeroom" tabindex="-1" aria-hidden="true" class="overflow-x-auto fixed top-0 left-0 right-0 z-50 hidden w-full p-4 md:inset-0 h-modal md:h-full bg-tranparent bg-black bg-opacity-50">
@@ -297,60 +250,31 @@ export default class TypeRoom extends React.Component {
                                 <span class="sr-only">Tutup modal</span>
                             </button>
                             <div class="px-6 py-6 lg:px-8">
-                                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-black">Edit Type Room</h3>
+                                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-black">Tipe Kamar</h3>
                                 <form class="space-y-6" onSubmit={(event) => this.handleSave(event)}>
                                     <div>
-                                        <label for="nama_tipe_kamar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Name Room Type</label>
-                                        <input type="text" name="nama_tipe_kamar" id="nama_tipe_kamar" value={this.state.nama_tipe_kamar} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan name room type" required />
+                                        <label for="nama_tipe_kamar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Name Tipe Kamar</label>
+                                        <input type="text" name="nama_tipe_kamar" id="nama_tipe_kamar" value={this.state.nama_tipe_kamar} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan nama tipe kamar" required />
                                     </div>
                                     <div>
-                                        <label for="harga" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Price Room Type</label>
-                                        <input type="number" name="harga" id="harga" value={this.state.harga} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan price room type" required />
+                                        <label for="harga" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Harag Tipe Kamar</label>
+                                        <input type="number" name="harga" id="harga" value={this.state.harga} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan harga tipe kamar" required />
                                     </div>
                                     <div>
-                                        <label for="deskripsi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Description Room Type</label>
-                                        <textarea rows="3" type="text" name="deskripsi" id="deskripsi" value={this.state.deskripsi} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan description room type" />
-                                    </div>
+                                        <label for="deskripsi" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Deskripsi</label>
+                                        <textarea rows="3" type="text" name="deskripsi" id="deskripsi" value={this.state.deskripsi} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan deskripsi tipe kamar" />
+                                    </div> 
                                     <div>
-                                        <label for="foto" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Photo Room Type</label>
-                                        <input type="file" name="foto" id="foto" placeholder="Pilih photo user" onChange={this.handleFile} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full px-2 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" required={this.state.action === "update" ? false : true} />
+                                        <label for="foto" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Foto Tipe Kamar</label>
+                                        <input type="file" name="foto" id="foto" placeholder="Pilih foto tipe kamar" onChange={this.handleFile} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full px-2 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" required={this.state.action === "update" ? false : true} />
                                     </div>
 
-                                    <button type="submit" class="w-full text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Simpan</button>
+                                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Simpan</button>
                                 </form>
                             </div>
                         </div>
                     </div>
                 </div>
-
-                {/* modal detail
-                <div id="modal_detail" tabindex="-1" class="overflow-x-auto fixed top-0 left-0 right-0 z-50 hidden w-full pt-10 pb-10 pl-96 md:inset-0 h-modal md:h-full bg-tranparent bg-black bg-opacity-50" >
-                    <div class="relative w-full h-full max-w-lg md:h-auto border-2 border-gray-500 rounded-lg shadow shadow-2xl items-center">
-                        <div class="relative bg-white rounded-lg">
-                            <div class="flex items-center justify-between p-5 border-b rounded-t border-gray-500">
-                                <h3 class="p-2 text-xl font-medium text-gray-900 ">
-                                    {this.state.nama_tipe_kamar} Room
-                                </h3>
-                                <button type="button" class="text-gray-400 bg-transparent hover:bg-red-500 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center hover:bg-gray-600 hover:text-white" data-modal-hide="medium-modal" onClick={() => this.handleCloseDetail()}>
-                                    <svg aria-hidden="true" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
-                                    <span class="sr-only">Close modal</span>
-                                </button>
-                            </div>
-                            <div class="p-6">
-                                <div className='container'>
-                                    <img class="rounded-md w-200 h-100" src={"http://localhost:8000/gambar/" + this.state.foto} />
-                                </div>
-                                <div class="px-2 py-4">
-                                    <div class="font-bold text-2xl mb-2">{this.state.nama_tipe_kamar}</div>
-                                    <div class="font-bold text-xl mb-2 text-blue-600">{this.state.harga}/night</div>
-                                    <p class="text-black-700 text-base">
-                                        {this.state.deskripsi}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
 
             </>
         );

@@ -22,10 +22,8 @@ export default class Navbar extends React.Component {
     }
 
     checkRole = () => {
-        if (this.state.role !== "admin" && this.state.role !== "resepsionis") {
-            localStorage.clear()
-            window.alert("You're not admin or resepsionis!")
-            window.location = '/'
+        if (this.state.role === "customer") {
+            window.location = '/beranda'
         }
     }
 
@@ -37,10 +35,19 @@ export default class Navbar extends React.Component {
             <nav className="bg-gray-800 flex justify-between px-10 items-center h-16 fixed top-0 left-0 right-0 z-50">
                 <h3 className="text-white font-bold text-xl">Hotel.</h3>
                 <ul className="flex gap-8 text-white">
+                {
+                    this.state.role === "admin" &&
                     <li><NavLink to='/user'>User</NavLink></li>
+                } {
+                    this.state.role === "admin" &&
                     <li><NavLink to='/kamar'>Kamar</NavLink></li>
+                } {
+                    this.state.role === "admin" &&
                     <li><NavLink to='/tipe_kamar'>Tipe Kamar</NavLink></li>
+                } {
+                    this.state.role === "resepsionis" &&
                     <li><NavLink to='/history'>History</NavLink></li>
+                }
                     <li><NavLink to='/'><span className="ml-2" onClick={() => this.logOut()}>Logout</span></NavLink></li>
                 </ul>
             </nav>

@@ -23,10 +23,10 @@ export default class Navbar extends React.Component {
     }
 
     checkRole = () => {
-        if (this.state.role !== "customer") {
-            localStorage.clear()
-            window.alert("You're not customer")
-            window.location = '/'
+        if (this.state.role === "admin") {
+            window.location = '/kamar'
+        } else if (this.state.role === "resepsionis") {
+            window.location = '/history'
         }
     }
 

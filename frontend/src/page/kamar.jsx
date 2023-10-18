@@ -13,7 +13,6 @@ export default class Room extends React.Component {
             id: "",
             nomor_kamar: "",
             id_tipe_kamar: "",
-            nama_tipe_kamar: "",
             role: "",
             token: "",
             action: "",
@@ -21,13 +20,13 @@ export default class Room extends React.Component {
         }
 
         if (localStorage.getItem("token")) {
-            if (localStorage.getItem("role") === "admin" ||
-                localStorage.getItem("role") === "resepsionis") {
+            if (localStorage.getItem("role") === "admin" ) {
                 this.state.token = localStorage.getItem("token")
                 this.state.role = localStorage.getItem("role")
-            } else {
-                window.alert("You're not admin or resepsionis!")
-                window.location = "/"
+            } else if (localStorage.getItem("role") === "resepsionis" ) {
+                window.location = "/history"
+            } else if (localStorage.getItem("role") === "customer" ) {
+                window.location = "/beranda"
             }
         }
     }
@@ -82,14 +81,11 @@ export default class Room extends React.Component {
     }
 
     handleEdit = (item) => {
-        // const selectedTypeRoom = this.state.typeroom.find((type) => type.id_tipe_kamar === item.id_tipe_kamar);
-
         $("#modal_room").show()
         this.setState({
             id: item.id,
             nomor_kamar: item.nomor_kamar,
             id_tipe_kamar: item.id_tipe_kamar,
-            // nama_tipe_kamar: selectedTypeRoom ? selectedTypeRoom.nama_tipe_kamar : "",
             action: "update"
         })
     }
@@ -174,10 +170,10 @@ export default class Room extends React.Component {
     }
 
     checkRole = () => {
-        if (this.state.role !== "admin" && this.state.role !== "resepsionis") {
-            localStorage.clear()
-            window.alert("You're not admin or resepsionis!")
-            window.location = '/'
+        if (this.state.role === "resepsionis") {
+            window.location = '/history'
+        } else if (this.state.role === "customer") {
+            window.location = '/beranda'
         }
     }
 
@@ -191,8 +187,7 @@ export default class Room extends React.Component {
         return (
             <>
                 <Navbar />
-                {
-                    this.state.role === "admin" &&
+
                     <div class="my-6">
                         <div className="mt-28 flex justify-center">
                             <h3 className="text-2xl">Kamar List</h3>
@@ -200,29 +195,11 @@ export default class Room extends React.Component {
 
                         <div className="flex justify-center mr-4">
                             <div className="flex rounded w-3/4 mt-7 mb-5">
-                                {this.state.role === "resepsionis" &&
-                                    <input
-                                        type="text"
-                                        className=" block w-full px-4 py-2 bg-white border rounded-md focus:border-blue-400 focus:ring-blue-300 focus:outline-none focus:ring focus:ring-opacity-40"
-                                        placeholder="Search Kamar"
-                                        name="nomor_kamar"
-                                        value={this.state.nomor_kamar}
-                                        onChange={this.handleChange}
-                                    />
-                                }
-                                {this.state.role === "resepsionis" &&
-                                    <button className="w-1/6 ml-2 px-4 text-white bg-blue-600 border border-1 border-blue-600 rounded hover:bg-blue-700" onClick={this._handleFilter}>
-                                        {/* <FontAwesomeIcon icon={faSearch} color="blue" /> */}Cari
-                                    </button>
-                                }
-                                {this.state.role === "admin" &&
-                                    <button className="w-1/6 ml-2 px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" onClick={() => this.handleAdd()}>
-                                        Add +
-                                    </button>
-                                }
+                                <button className="w-1/6 ml-2 px-3 py-2 text-white bg-blue-600 rounded hover:bg-blue-700" onClick={() => this.handleAdd()}>
+                                    Add +
+                                </button>
                             </div>
                         </div>
-
 
                         <table className="w-3/4 mx-auto shadow-2xl">
                             <thead>
@@ -230,9 +207,7 @@ export default class Room extends React.Component {
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">No</th>
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Room Number</th>
                                     <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Room Type</th>
-                                    {this.state.role === "admin" &&
-                                        <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Aksi</th>
-                                    }
+                                    <th className="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -249,20 +224,17 @@ export default class Room extends React.Component {
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-center">
                                                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-indigo-100 text-indigo-800">
-                                                    {/* {item.nama_tipe_kamar} */}
                                                     {item.nama_tipe_kamar}
                                                 </span>
                                             </td>
-                                            {this.state.role === "admin" &&
-                                                <td className="px-6 py-4 whitespace-nowrap text-center">
-                                                    <button class="bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded mr-2" onClick={() => this.handleEdit(item)}>
-                                                        {/* <FontAwesomeIcon icon={faPencilSquare} size="lg" /> */}Edit
-                                                    </button>
-                                                    <button class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded" onClick={() => this.handleDrop(item.id)}>
-                                                        {/* <FontAwesomeIcon icon={faTrash} size="lg" /> */}Delete
-                                                    </button>
-                                                </td>
-                                            }
+                                            <td className="px-6 py-4 whitespace-nowrap text-center">
+                                                <button class="bg-green-600 hover:bg-green-700 text-white py-1 px-2 rounded mr-2" onClick={() => this.handleEdit(item)}>
+                                                    Edit
+                                                </button>
+                                                <button class="bg-red-500 hover:bg-red-700 text-white py-1 px-2 rounded" onClick={() => this.handleDrop(item.id)}>
+                                                    Delete
+                                                </button>
+                                            </td>
                                         </tr>
                                     );
                                 })}
@@ -270,15 +242,6 @@ export default class Room extends React.Component {
                         </table>
 
                     </div>
-                }
-
-                {
-                    this.state.role === "resepsionis" &&
-                    <div class=" flex justify-center items-center h-screen">
-                        <div class="text-center">Hanya Admin yang dapat mengakses kamar</div>
-                    </div>
-                }
-
 
                 {/* Modal Form */}
                 <div id="modal_room" tabindex="-1" aria-hidden="true" class="overflow-x-auto fixed top-0 left-0 right-0 z-50 hidden w-full p-4 md:inset-0 h-modal md:h-full bg-tranparent bg-black bg-opacity-50">
@@ -289,34 +252,19 @@ export default class Room extends React.Component {
                                 <span class="sr-only">Tutup modal</span>
                             </button>
                             <div class="px-6 py-6 lg:px-8">
-                                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-black">Edit Room</h3>
+                                <h3 class="mb-4 text-xl font-medium text-gray-900 dark:text-black">Kamar</h3>
                                 <form class="space-y-6" onSubmit={(event) => this.handleSave(event)}>
                                     <div>
-                                        <label for="nomor_kamar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Number Room</label>
-                                        <input type="text" name="nomor_kamar" id="nomor_kamar" value={this.state.nomor_kamar} onChange={this.handleChange} class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-gray-800" placeholder="Masukkan nomor kamar" required />
-                                    </div>
-                                    <div>
-                                        <label for="id_tipe_kamar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Type Room</label>
+                                        <label for="id_tipe_kamar" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-800">Tipe Kamar</label>
                                         <select className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-gray-800 block w-full p-2.5 dark:bg-white dark:border-gray-500 dark:placeholder-gray-400 dark:text-black" placeholder="Type Room" name="id_tipe_kamar" value={this.state.id_tipe_kamar} onChange={this.handleChange} required>
-                                            {/* <option value="">Pilih Role</option>
-                                            <option value="6">Deluxe</option>
-                                            <option value="7">Double</option>
-                                            <option value="11">Kasur Ahmad Super</option>
-                                            <option value="13">Twin</option> */}
-                                            {/* <option value="">Pilih Room Type</option>
+                                            <option value="">Pilih Tipe Kamar</option>
                                             {this.state.typeroom.map((item, index) => (
-                                                <option value={item.id_tipe_kamar}>{item.nama_tipe_kamar}</option>
+                                                <option value={item.id}>{item.nama_tipe_kamar}</option>
 
-                                            ))} */}
-                                            <option value="">Pilih Room Type</option>
-                                            {this.state.typeroom.map((item) => (
-                                                <option value={item.id_tipe_kamar} selected={item.id_tipe_kamar === this.state.id_tipe_kamar}>
-                                                    {item.nama_tipe_kamar}
-                                                </option>
                                             ))}
                                         </select>
                                     </div>
-                                    <button type="submit" class="w-full text-white bg-gradient-to-br from-purple-600 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Simpan</button>
+                                    <button type="submit" class="w-full text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2">Simpan</button>
                                 </form>
                             </div>
                         </div>
